@@ -1,6 +1,8 @@
 ## Shopping Cart Animation
+
 inspired by [https://codepen.io/AbubakerSaeed/pen/poEMOXd](https://codepen.io/AbubakerSaeed/pen/poEMOXd)
-[demo](https://shopping.vakhula.dev/)
+
+[Demo](https://shopping.vakhula.dev/)
 
 ## Getting Started
 
@@ -23,3 +25,4 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 - fix CLS of images
 - add sort/filter sidebar
 - add Github link
+- add action to buy button
