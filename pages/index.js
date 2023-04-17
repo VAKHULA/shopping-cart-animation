@@ -312,6 +312,7 @@ const ShoppingCart = () => {
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
           </svg>
+          <span className='shopping-cart__price'>${cartProducts.reduce((acc, cur) => (acc + cur.price), 0)}</span>
           <span className='shopping-cart__count'>{cartProducts.length}</span>
         </button>
       </div>
@@ -323,7 +324,7 @@ const ShoppingCart = () => {
           right: 0;
           height: 5rem;
           background-color: rgba(255,255,255,0.7);
-          padding-right: 7rem;
+          padding-right: 11rem;
           transition: all 300ms linear;
         }
         .shopping-cart button {
@@ -352,6 +353,15 @@ const ShoppingCart = () => {
           vertical-align: bottom;
           padding: 0.05rem 0.25rem 0;
           box-shadow: rgba(0,0,0,.3)0px 4px 12px;
+        }
+        .shopping-cart__price {
+          position: absolute;
+          top: 0.8rem;
+          right: 6rem;
+          width: 5rem;
+          font-family: sans-serif;
+          font-size: 1.2rem;
+          text-align: right;
         }
       `}</style>
     </>
