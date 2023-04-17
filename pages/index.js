@@ -6,74 +6,74 @@ const initialProducts = [
   {
     name: 'Plant 1',
     src: '/assets/1.png',
-    price: 1,
-    count: 5,
+    price: 25,
+    count: 1,
   },
   {
     name: 'Plant 2',
     src: '/assets/2.png',
-    price: 1,
-    count: 5,
+    price: 10,
+    count: 2,
   },
   {
     name: 'Plant 3',
     src: '/assets/3.png',
-    price: 1,
-    count: 5,
+    price: 20,
+    count: 3,
   },
   {
     name: 'Plant 4',
     src: '/assets/4.png',
-    price: 1,
-    count: 5,
+    price: 30,
+    count: 4,
   },
   {
     name: 'Plant 5',
     src: '/assets/5.png',
-    price: 1,
+    price: 100,
     count: 5,
   },
   {
     name: 'Plant 6',
     src: '/assets/6.png',
-    price: 1,
-    count: 5,
+    price: 5,
+    count: 6,
   },
   {
     name: 'Plant 7',
     src: '/assets/7.png',
-    price: 1,
-    count: 5,
+    price: 5,
+    count: 7,
   },
   {
     name: 'Plant 8',
     src: '/assets/8.png',
-    price: 1,
-    count: 5,
+    price: 100,
+    count: 8,
   },
   {
     name: 'Plant 9',
     src: '/assets/9.png',
-    price: 1,
-    count: 5,
+    price: 10,
+    count: 9,
   },
   {
     name: 'Plant 10',
     src: '/assets/10.png',
-    price: 1,
-    count: 5,
+    price: 5,
+    count: 10,
   },
   {
     name: 'Plant 11',
     src: '/assets/11.png',
-    price: 1,
-    count: 5,
+    price: 5,
+    count: 11,
   },
   {
     name: 'Plant 12',
     src: '/assets/12.png',
-    price: 1,
-    count: 5,
+    price: 0,
+    count: 12,
   },
 ]
 
@@ -104,8 +104,27 @@ function ShoppingCartProvider({ children }) {
     );
   }, []);
 
+  const removeProduct = useCallback((product) => {
+    setProducts(
+      produce((draft) => {
+        const initialProduct = initialProducts.find((p) => p.name === product.name);
+        const newProduct = draft.find((p) => p.name === product.name);
+        newProduct.count = initialProduct.count
+        return draft
+      })
+    );
+
+    setCart(
+      produce((draft) => {
+        draft = draft.filter((p) => p.name !== product.name);
+        draft = draft.sort((a, b) => (a.name - b.name))
+        return draft
+      })
+    );
+  }, []);
+
   return (
-    <ShoppingCartContext.Provider value={{products, cartProducts, addProduct}}>
+    <ShoppingCartContext.Provider value={{products, cartProducts, addProduct, removeProduct}}>
       {children}
     </ShoppingCartContext.Provider>
   );
@@ -116,12 +135,13 @@ const useShoppingCart = () => {
 }
 
 const CartProduct = ({product}) => {
+  const [mounted, setMounted] = useState(false)
   const [position, setPos] = useState(product.target)
   const [count, setCount] = useState(1)
-  const { cartProducts } = useShoppingCart()
+  const { cartProducts, removeProduct } = useShoppingCart()
 
   useEffect(() => {
-    let unique = [...new Set(cartProducts.map((i)=>(i.name)))];
+    let unique = [...new Set(cartProducts.map((i) => (i.name)))];
     const addedProductIndex = unique.findIndex((name) => (name === product.name))
 
     if (addedProductIndex >= 0) {
@@ -144,11 +164,28 @@ const CartProduct = ({product}) => {
         height: '25rem'
       })
     }
+    setTimeout(()=>{
+      setMounted(true)
+    }, 1000)
   }, [])
+  useEffect(() => {
+    if (mounted) {
+      let unique = [...new Set(cartProducts.map((i) => (i.name)))];
+      const addedProductIndex = unique.findIndex((name) => (name === product.name))
+      if (addedProductIndex >= 0) {
+        setPos({
+          ...position,
+          transition: 'none',
+          left: `${addedProductIndex * 4}rem`
+        })
+      }
+    }
+  }, [cartProducts])
 
   return (
     <>
       <div
+        title={product.name}
         className='preview'
         style={{
           position: 'fixed',
@@ -163,6 +200,9 @@ const CartProduct = ({product}) => {
         />
         {count > 1 &&
           <span className='count'>{count}</span>
+        }
+        {mounted &&
+          <span className='remove' onClick={() => { removeProduct(product) }}>x</span>
         }
       </div>
       <style jsx>{`
@@ -187,6 +227,25 @@ const CartProduct = ({product}) => {
           min-width: 6rem;
           text-align: center;
           box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+        }
+        .remove {
+          font-size: 5rem;
+          color: red;
+          background-color: #fff;
+          border-radius: 3rem;
+          width: 6rem;
+          display: block;
+          height: 6rem;
+          position: absolute;
+          right: 0;
+          bottom: 1rem;
+          vertical-align: top;
+          line-height: 1;
+          text-align: center;
+          box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+        }
+        .remove:hover {
+          cursor: pointer;
         }
       `}</style>
     </>
